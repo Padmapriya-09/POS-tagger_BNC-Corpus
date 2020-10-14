@@ -66,12 +66,12 @@ def countFrequencyOfTag(my_list):
 			freq_of_tag[splitWords[1]] = 1
 	return freq_of_tag
 
-d=os.getcwd()																	#get the currect working directory here it is: Downloads/AI_project/
+d=os.getcwd()																	#get the currect working directory here it is: Documents/AI_project/
 listOfFiles = getListOfFiles(d+"/Train-corups")									#get list of all files in the root directory including files from sub-directories
 
 tagged_words= trainCorpus(listOfFiles)											#list of all word_tag after complete training
 print("Number of word_tag's file after training : %d" % len (tagged_words))
-os.chdir(d)																		#change the directory to initial here it is: Downloads/AI_Project
+os.chdir(d)																		#change the directory to initial here it is: Documents/AI_Project
 f=open("word_tag.txt",'w')														#now create a new file in current directory	
 for i in sorted(tagged_words):													#add all elements of list into the file
     f.write(i)
@@ -79,7 +79,7 @@ for i in sorted(tagged_words):													#add all elements of list into the fi
 
 freq_of_word=countFrequencyOfWord(tagged_words)
 print("Length of frequency of word file : %d" % len (freq_of_word))
-os.chdir(d)																		#change the directory to initial here it is: Downloads/AI_Project
+os.chdir(d)																		#change the directory to initial here it is: Documents/AI_Project
 f=open("frequency_of_word.txt",'w')												#now create a new file in current directory	
 for key, value in sorted(freq_of_word.items()):
    	f.write(key)
