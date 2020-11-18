@@ -12,3 +12,9 @@ def countFrequencyOfWordWithtag(my_list):
 			freq_of_word_with_tag[splitWords[0]]={}
 			freq_of_word_with_tag[splitWords[0]][splitWords[1]]=1
 	return freq_of_word_with_tag
+
+def findCompleteLengthOfNestedDictionary(dict):
+	length=0
+	for key,value in dict.items():
+		length += len(dict[key])
+	return length

@@ -5,7 +5,6 @@ from get_list_of_files import *							            #has a function to get list of
 from train_using_elementTree import * 					        #has a function which uses Element tree to train the tagger which takes list of all files for training and returns a list which contains all words along with tag in the format word_tag.
 from get_freq_of_word import *							            #has a function to count frequency of all words in given list of words with tags. Returns a dictionary with word as key and frequency of word as value
 from get_freq_of_word_with_tag import *					        #has a function to count frequency of a word_tag in a given list of words with tags. Returns a nested dictionary with key as word and value as another dictionary whose key is tag and value is frequency of word along with tag
-from get_complete_length_of_nested_dictionary import *	#has a function to count the complete length of nested dictionary
 from get_freq_of_tag import *							              #function to count frequency of all tags in given list of words with tags. Returns a dictionary with tag as key and frequency of tag as value
 
 
@@ -14,21 +13,21 @@ d=os.path.abspath('..')                                          #get parent of 
 listOfFiles = getListOfFiles(d+"/Train-corups")									 #get list of all files in the root directory including files from sub-directories
 
 #to create a file and store all word_tag's after training
-tagged_words= trainCorpus(listOfFiles)											#list of all word_tag after complete training
-print("Number of word_tag's file after training : %d" % len (tagged_words))
+word_tag= trainCorpus(listOfFiles)											#list of all word_tag after complete training
+print("Number of word_tag's after training including ambiguous tags: %d" % len (word_tag))
 os.chdir(d+"/Output Files")																	#change the directory to create a new output file. For me it is Documents/AI_project/Output Files
-f=open("word_tag.txt",'w')														      #now create a new file in current directory	
-for i in sorted(tagged_words):													    #add all elements of list into the file
+f=open("word_tag_file.txt",'w')														      #now create a new file in current directory	
+for i in sorted(word_tag):													    #add all elements of list into the file
     f.write(i)
     f.write("\n")
 
 #to create a file and store frequency of all words after training
 #to create a list and store all available words
-freq_of_word=countFrequencyOfWord(tagged_words)
+freq_of_word=countFrequencyOfWord(word_tag)
 list_of_words=[]
-print("Length of frequency of word file : %d" % len (freq_of_word))
+print("Number of word's after training : %d" % len (freq_of_word))
 os.chdir(d+"/Output Files") 															#change the directory to create a new output file. For me it is Documents/AI_project/Output Files
-f=open("frequency_of_word.txt",'w')												#now create a new file in current directory	
+f=open("freq_of_word_file.txt",'w')												#now create a new file in current directory	
 for key, value in sorted(freq_of_word.items()):
     list_of_words.append(key)
     f.write(key)
@@ -37,10 +36,10 @@ for key, value in sorted(freq_of_word.items()):
     f.write("\n")
 
 #to create a file and store frequency of all word_tag combinations after training
-freq_of_word_with_tag=countFrequencyOfWordWithtag(tagged_words)
-print("Length of frequency of word with tag file : %d" % findCompleteLengthOfNestedDictionary(freq_of_word_with_tag))
+freq_of_word_with_tag=countFrequencyOfWordWithtag(word_tag)
+print("Number of distinct word_tag's after training : %d" % findCompleteLengthOfNestedDictionary(freq_of_word_with_tag))
 os.chdir(d+"/Output Files") 
-f=open("frequency_of_word_with_tag.txt",'w')
+f=open("freq_of_word_tag_file.txt",'w')
 for key, nested in sorted(freq_of_word_with_tag.items()):
     print(key, file=f)
     for subkey, value in sorted(nested.items()):
@@ -48,12 +47,14 @@ for key, nested in sorted(freq_of_word_with_tag.items()):
 
 #to create a file and store frequency of all tags after training
 #to create a list and store all available tags
-freq_of_tag=countFrequencyOfTag(tagged_words)
+freq_of_tag=countFrequencyOfTag(word_tag)
+prob_of_tag={}
 list_of_tags=[]
-print("Length of frequency of tag file : %d" % len (freq_of_tag))
+print("Number of tag's after training : %d" % len (freq_of_tag))
 os.chdir(d+"/Output Files") 																	#change the directory to initial for me it is: Documents/AI_project
-f=open("frequency_of_tag.txt",'w')												    #now create a new file in current directory	
+f=open("freq_of_tag_file.txt",'w')												    #now create a new file in current directory	
 for key, value in sorted(freq_of_tag.items()):
+    prob_of_tag[key]=value/len(word_tag)
     list_of_tags.append(key)
     f.write(key)
     f.write(" : ")
@@ -75,20 +76,39 @@ for i in high:
 	print("\t",i[0]," :",i[1])
 
 #to create a file and store probability of a word given tag
+prob_of_word_given_tag={}
 os.chdir(d+"/Output Files")
-f=open("probability_of_word_given_tag.txt",'w')
+f=open("prob_of_word_given_tag_file.txt",'w')
 for tag in list_of_tags:
+    prob_of_word_given_tag[tag]={}
     f.write(tag+":\n")
     for word in list_of_words:
-        if (tag in freq_of_word_with_tag[word]):
-            prob_of_word_given_tag = freq_of_word_with_tag[word][tag]/freq_of_word[word]
-            f.write("\t"+word+":"+"\t"+str(prob_of_word_given_tag)+"\n")
+        if tag in freq_of_word_with_tag[word]:
+            probability_of_word_given_tag = freq_of_word_with_tag[word][tag]/freq_of_word[word]
+            prob_of_word_given_tag[tag][word]=probability_of_word_given_tag
+            f.write("\t"+word+":"+"\t"+str(probability_of_word_given_tag)+"\n")
 
-#to clear all the dictionaries and list used
+prob_of_tag_given_word={}
+os.chdir(d+"/Output Files")
+f=open("trained_file.txt",'w')
+for word in list_of_words:
+    f.write(word+"_")
+    maxi=0
+    prob_of_tag_given_word[word]={}
+    for tag in list_of_tags:
+        if tag in freq_of_word_with_tag[word]:
+            prob_of_tag_given_word[word][tag]=prob_of_word_given_tag[tag][word]*prob_of_tag[tag]
+            if prob_of_tag_given_word[word][tag]>maxi:
+                maxi=prob_of_tag_given_word[word][tag]
+                max_tag=tag
+    f.write(max_tag+"\n")
+
+#to clear all the dictionaries and lists used
 freq_of_word.clear()
 freq_of_tag.clear()
 freq_of_word_with_tag.clear()
-tagged_words.clear()
+word_tag.clear()
 list_of_words.clear()
-list_of_tags.clear()
-        
+list_of_tags.clear() 
+prob_of_word_given_tag.clear()   
+prob_of_tag_given_word.clear()  
