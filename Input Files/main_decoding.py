@@ -77,6 +77,10 @@ df = pd.DataFrame(data, columns=['y_Actual','y_Predicted'])
 confusion_matrix = pd.crosstab(df['y_Actual'], df['y_Predicted'], rownames=['Actual'], colnames=['Predicted'])
 print (confusion_matrix)
 
+f=open('confusion_matrix.txt','w',encoding='utf8')
+f.write(str(confusion_matrix))
+f.close()
+
 
 # ------------------------------------------------------- #
 
