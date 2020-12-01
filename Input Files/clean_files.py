@@ -3,11 +3,11 @@ import csv
 import sys
 import xml.etree.ElementTree as ET
 
-# ------------------------------------------------------- #
+# --------------------------------------------------------------------------------------------------------------------------- #
 
-#    function to get list of all files in a directory     #
+#                                   function to get list of all files in a directory                                          #
 
-# ------------------------------------------------------- #
+# --------------------------------------------------------------------------------------------------------------------------- #
 
 def getListOfFiles(dirName):
 	listOfAllFiles = list()
@@ -16,13 +16,13 @@ def getListOfFiles(dirName):
 	return listOfAllFiles
 
 
-# ------------------------------------------------------- #
+# --------------------------------------------------------------------------------------------------------------------------- #
 
-#               clean files in given corpus               #
+#                                              clean files in given corpus                                                    #
 
-#        and add all sentences into seperate file         #
+#                                        and add all sentences into seperate file                                             #
 
-# ------------------------------------------------------- #
+# --------------------------------------------------------------------------------------------------------------------------- #
 
 fn = input("Enter the name of the root folder where all xml files are located: ")
 file_name="cleaned_"+fn+".csv"
@@ -47,10 +47,11 @@ for file in listOfFiles:
 	for sentence in root.findall('.//s'):
 		no_of_sentences+=1
 		line.clear()
-		for word in sentence.findall('.//w'):
-			no_of_word_tags+=1
-			line.append(word.text.strip()+'_'+word.attrib['c5'])
-				
+		for word in sentence.iter('*'):
+			if 0 ==  len(word) and (word.tag=='w' or word.tag=='c'):
+				if word.text is not None:
+					no_of_word_tags+=1
+					line.append(word.text.strip()+'_'+word.attrib['c5'])
 		if line!=[]:
 			writer.writerow(line)
 
@@ -60,6 +61,13 @@ print('No.of sentences in dataset: ' + str(no_of_sentences))
 print("Number of word_tag's in dataset: " + str(no_of_word_tags))
 f.close()
 print("All sentences after cleaning are added into \""+file_name+"\" file in the Output Files folder in csv format")
+
+
+# --------------------------------------------------------------------------------------------------------------------------- #
+
+#                                             clear all used dictionaries and lists                                           #
+
+# --------------------------------------------------------------------------------------------------------------------------- #
 
 listOfFiles.clear()
 line.clear()

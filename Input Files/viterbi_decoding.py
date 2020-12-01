@@ -31,3 +31,25 @@ def viterbi(y, A, B, words, tags, Pi=None):
 		x[i - 1] = T2[x[i], i]
 
 	return x
+
+'''def Viterbi(words):
+	state = []
+	for key, word in enumerate(words):
+		p = [] 
+		for tag in list_of_tags:
+			if key == 0:
+				transition_p = transition_matrix_df.at['start', tag]
+			else:
+				transition_p = transition_matrix_df.at[state[-1], tag]
+
+			if words[key] in emission_matrix_df.index:
+				emission_p = emission_matrix_df.at[words[key], tag]
+			else:
+				emission_p=0
+			state_probability = emission_p * transition_p   
+			p.append(state_probability)
+		pmax = max(p)
+		state_max = list_of_tags[p.index(pmax)] 
+		state.append(state_max)
+	return state
+'''
