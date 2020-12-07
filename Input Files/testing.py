@@ -26,17 +26,6 @@ except OSError:
 
 # --------------------------------------------------------------------------------------------------------------------------- #
 
-#                           delete all previously created files by this program if they exist                                 #
-
-# --------------------------------------------------------------------------------------------------------------------------- #
-
-os.chdir(d+"/Output Files")
-if os.path.exists('confusion_matrix.csv'):
-	os.remove('confusion_matrix.csv')
-
-
-# --------------------------------------------------------------------------------------------------------------------------- #
-
 #                                       initialize lists required by both the models                                          #
 
 # --------------------------------------------------------------------------------------------------------------------------- #
@@ -210,14 +199,23 @@ def hmm():
 # --------------------------------------------------------------------------------------------------------------------------- #
 
 boolean=False
+confusion_matrix_file_name=''
 while boolean==False:
 	choice=input("Choose by which method you want to test the POS-tagger: \n\t1.Using Bayes Rule\n\t2.Using Hidden Markov Model\nYour choice!??: ")
 	if choice=='1':
 		bool=True
+		confusion_matrix_file_name='confusion_matrix_using_bayes_rule.csv'
+		os.chdir(d+"/Output Files")
+		if os.path.exists(confusion_matrix_file_name):
+			os.remove(confusion_matrix_file_name)
 		bayes_rule()
 		break
 	elif choice=='2':
 		bool==True
+		confusion_matrix_file_name='confusion_matrix_using_hmm.csv'
+		os.chdir(d+"/Output Files")
+		if os.path.exists(confusion_matrix_file_name):
+			os.remove(confusion_matrix_file_name)
 		hmm()
 		break
 	else:
@@ -251,7 +249,7 @@ print("Accuracy of the system is : " + str(correct_count*100/total_count) + " %"
 confusion_matrix_df = pd.DataFrame(confusion_matrix, columns = list_of_tags, index=list_of_tags)
 #print(repr(confusion_matrix_df))
 os.chdir(d+"/Output Files")
-confusion_matrix_df.to_csv(r'confusion_matrix.csv', header=True, index=True)
+confusion_matrix_df.to_csv(confusion_matrix_file_name, header=True, index=True)
 
 print("Confusion Matrix added")
 

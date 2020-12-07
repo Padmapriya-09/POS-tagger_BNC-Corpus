@@ -326,11 +326,11 @@ boolean=False
 while boolean==False:
 	choice=input("Choose by which method you want to train the POS-tagger: \n\t1.Using Bayes Rule\n\t2.Using Hidden Markov Model\nYour choice!??: ")
 	if choice=='1':
-		bool=True
+		boolean=True
 		bayes_rule()
 		break
 	elif choice=='2':
-		bool==True
+		boolean==True
 		hmm()
 		break
 	else:
